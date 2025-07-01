@@ -1,5 +1,7 @@
+from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 from rest_framework import status
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
@@ -44,6 +46,12 @@ class CategoryProductViewSet(BaseModelViewSet):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
             self.permission_classes = [IsAdminUser]
         return super().get_permissions()
+
+    def get_object(self):
+        try:
+            return super().get_object()
+        except Http404:
+            raise NotFound("Categoria no encontrado")
 
     # --- LIST ---
     @swagger_auto_schema(

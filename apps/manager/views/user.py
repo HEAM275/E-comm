@@ -1,6 +1,8 @@
+from django.http import Http404
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 from rest_framework import status, viewsets
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.validators import ValidationError
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -33,9 +35,15 @@ class UserViewSet(BaseModelViewSet):
         return UserListSerializer
 
     def get_permissions(self):
-        if self.action in ['create', 'destroy']:
+        if self.action in ['list', 'retrieve', 'create', 'update', 'partial_update', 'destroy']:
             self.permission_classes = [IsAdminUser]
         return super().get_permissions()
+
+    def get_object(self):
+        try:
+            return super().get_object()
+        except Http404:
+            raise NotFound("Usuario no encontrado")
 
     @swagger_auto_schema(
         operation_description='List all active users.',

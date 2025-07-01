@@ -181,9 +181,9 @@ class RegisterView(APIView):
         if serializer.is_valid():
             user = serializer.save()
 
-            verification, created = EmailVerification.objects.get_or_create(
-                user=user)
-            send_verification_email(user, verification.token)
+            # verification, created = EmailVerification.objects.get_or_create(
+            #     user=user)
+            # send_verification_email(user, verification.token)
 
             return Response({'detail': 'Registro exitoso. Revisa tu correo.'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

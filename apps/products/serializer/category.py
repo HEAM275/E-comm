@@ -9,14 +9,22 @@ class CategoryListSerializer(AuditableSerializerMixin):
         model = Category
         fields = ['name', 'description', 'created_date', 'created_by',
                   'updated_date', 'updated_by', 'deleted_date', 'deleted_by']
-        read_only_fields = fields
+        read_only_fields = [
+            'created_date', 'created_by',
+            'updated_date', 'updated_by',
+            'deleted_date', 'deleted_by'
+        ]
 
 
 class CategoryDetailSerializer(AuditableSerializerMixin):
     class Meta:
         model = Category
         fields = '__all__'
-        read_only_fields = fields
+        read_only_fields = [
+            'created_date', 'created_by',
+            'updated_date', 'updated_by',
+            'deleted_date', 'deleted_by'
+        ]
 
 
 class CategoryCreateSerializer(AuditableSerializerMixin):

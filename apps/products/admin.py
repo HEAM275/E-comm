@@ -41,7 +41,7 @@ class ProductAdmin(admin.ModelAdmin):
                        'updated_by', 'deleted_date', 'deleted_by')
     fieldsets = (
         (_('Basic Information'), {
-            'fields': ('name', 'description', 'category_product', 'image')
+            'fields': ('name', 'description', 'category', 'image')
         }),
         (_('Pricing & Stock'), {
             'fields': ('price', 'stock')
