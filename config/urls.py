@@ -40,6 +40,7 @@ urlpatterns = [
     path('authentication/', include('apps.authentication.urls')),
     path('users/', include('apps.manager.urls')),
     path('payment/', include('apps.payment.urls')),
+    path('shoppin_car/', include('apps.shopping_car.urls')),
 
     # Documentación
     path('swagger/', schema_view.with_ui('swagger',
