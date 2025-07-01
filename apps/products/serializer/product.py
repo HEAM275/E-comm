@@ -140,7 +140,7 @@ class ProductUpdateSerializer(AuditableSerializerMixin):
         return value
 
     def validate_status(self, value):
-        allowed_statuses = [choice[0] for choice in Product.STATUS_CHOICES]
+        allowed_statuses = [choice[0] for choice in STATUS_CHOICES]
         if value not in allowed_statuses:
             raise serializers.ValidationError(_('Invalid status selected.'))
         return value

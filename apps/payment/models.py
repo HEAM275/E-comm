@@ -9,6 +9,7 @@ from apps.products.models.product import Product
 class Order(AuditableMixins):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_paid = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"Orden {self.id} - {self.user.email}"
