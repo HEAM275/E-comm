@@ -168,10 +168,14 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-migrations/0*.py
-authentication/migrations/0*.py
-interface/migrations/0*.py
-system_platform/migrations/0*.py
+#migrations files
+migrations/
+apps/authentication/migrations/
+apps/common/migrations/
+apps/manager/migrations/
+apps/payment/migrations/
+apps/products/migrations/
+apps/shopping_car/migrations/
 
 storage/traffic_files/*
 
