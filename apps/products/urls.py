@@ -8,11 +8,10 @@ from apps.products.views.product import ProductViewSet
 router = DefaultRouter()
 
 # Registramos los ViewSets con sus respectivos endpoints
-router.register(r'categories', CategoryProductViewSet,
-                basename='categoryproduct')
-router.register(r'products', ProductViewSet, basename='product')
+router.register(r"categories", CategoryProductViewSet, basename="categoryproduct")
+router.register(r"products", ProductViewSet, basename="product")
 
 # Las URLs se generan automáticamente
 urlpatterns = [
-    path('', include(router.urls)),
+    path("", include(router.urls)),
 ]

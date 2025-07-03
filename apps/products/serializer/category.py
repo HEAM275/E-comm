@@ -7,43 +7,58 @@ from apps.products.models.category import Category
 class CategoryListSerializer(AuditableSerializerMixin):
     class Meta:
         model = Category
-        fields = ['name', 'description', 'created_date', 'created_by',
-                  'updated_date', 'updated_by', 'deleted_date', 'deleted_by']
+        fields = [
+            "name",
+            "description",
+            "created_date",
+            "created_by",
+            "updated_date",
+            "updated_by",
+            "deleted_date",
+            "deleted_by",
+        ]
         read_only_fields = [
-            'created_date', 'created_by',
-            'updated_date', 'updated_by',
-            'deleted_date', 'deleted_by'
+            "created_date",
+            "created_by",
+            "updated_date",
+            "updated_by",
+            "deleted_date",
+            "deleted_by",
         ]
 
 
 class CategoryDetailSerializer(AuditableSerializerMixin):
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = "__all__"
         read_only_fields = [
-            'created_date', 'created_by',
-            'updated_date', 'updated_by',
-            'deleted_date', 'deleted_by'
+            "created_date",
+            "created_by",
+            "updated_date",
+            "updated_by",
+            "deleted_date",
+            "deleted_by",
         ]
 
 
 class CategoryCreateSerializer(AuditableSerializerMixin):
     class Meta:
         model = Category
-        fields = ['name', 'description']
+        fields = ["name", "description"]
 
     def validate_name(self, value):
         if not value:
             raise serializers.ValidationError(
-                _('You must provide a name for this Category'))
+                _("You must provide a name for this Category")
+            )
 
         if Category.objects.filter(name=value).exists():
-            raise serializers.ValidationError(
-                _('Category name already exists'))
+            raise serializers.ValidationError(_("Category name already exists"))
 
         if len(value) > 255:
             raise serializers.ValidationError(
-                _('Category name must be less than 255 characters'))
+                _("Category name must be less than 255 characters")
+            )
 
         return value
 
@@ -51,24 +66,33 @@ class CategoryCreateSerializer(AuditableSerializerMixin):
 class CategoryUpdateSerializer(AuditableSerializerMixin):
     class Meta:
         model = Category
-        fields = ['name', 'description']
-        read_only_fields = ['created_date', 'created_by', 'updated_date', 'updated_by',
-                            'deleted_date', 'deleted_by']
+        fields = ["name", "description"]
+        read_only_fields = [
+            "created_date",
+            "created_by",
+            "updated_date",
+            "updated_by",
+            "deleted_date",
+            "deleted_by",
+        ]
 
     def validate_name(self, value):
-        instance = self.instance  # Aquí está el registro actual que se está actualizando
+        instance = (
+            self.instance
+        )  # Aquí está el registro actual que se está actualizando
 
         if not value:
             raise serializers.ValidationError(
-                _('You must provide a name for this Category'))
+                _("You must provide a name for this Category")
+            )
 
         if len(value) > 255:
             raise serializers.ValidationError(
-                _('Category name must be less than 255 characters'))
+                _("Category name must be less than 255 characters")
+            )
 
         # Verifica duplicados EXCLUYENDO la instancia actual
         if Category.objects.filter(name=value).exclude(pk=instance.pk).exists():
-            raise serializers.ValidationError(
-                _('Category name already exists'))
+            raise serializers.ValidationError(_("Category name already exists"))
 
         return value

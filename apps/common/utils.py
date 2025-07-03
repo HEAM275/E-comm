@@ -1,4 +1,3 @@
-
 def get_user_fullname(user):
     if not user or not user.is_authenticated:
         return None

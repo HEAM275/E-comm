@@ -6,8 +6,7 @@ import uuid
 
 
 class AuthToken(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     access_token = models.TextField(unique=True)
     refresh_token = models.TextField(unique=True)
     expires_at = models.DateTimeField()
@@ -22,8 +21,7 @@ class AuthToken(models.Model):
 
     def revoke(self):
         BlacklistedToken.objects.create(
-            token=self.refresh_token,
-            expires_at=self.expires_at
+            token=self.refresh_token, expires_at=self.expires_at
         )
         self.delete()
 
@@ -38,8 +36,7 @@ class BlacklistedToken(models.Model):
 
 
 class EmailVerification(models.Model):
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     token = models.CharField(max_length=255, default=uuid.uuid4)
     created_at = models.DateTimeField(auto_now_add=True)
     is_verified = models.BooleanField(default=False)
@@ -50,8 +47,7 @@ class EmailVerification(models.Model):
 
 
 class PasswordResetToken(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     token = models.CharField(max_length=255, default=uuid.uuid4)
     created_at = models.DateTimeField(auto_now_add=True)
 

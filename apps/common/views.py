@@ -1,4 +1,3 @@
-
 from django.utils import timezone
 from rest_framework.exceptions import PermissionDenied
 from rest_framework import viewsets
@@ -20,10 +19,7 @@ class BaseModelViewSet(viewsets.ModelViewSet):
 
         if user.is_authenticated:
             full_name = get_user_fullname(user)
-            serializer.save(
-                created_by=full_name,
-                created_date=timezone.now()
-            )
+            serializer.save(created_by=full_name, created_date=timezone.now())
         else:
             raise PermissionDenied("Usuario no autenticado")
 
@@ -33,10 +29,7 @@ class BaseModelViewSet(viewsets.ModelViewSet):
 
         if user.is_authenticated:
             full_name = get_user_fullname(user)
-            serializer.save(
-                updated_by=full_name,
-                updated_date=timezone.now()
-            )
+            serializer.save(updated_by=full_name, updated_date=timezone.now())
         else:
             raise PermissionDenied("Usuario no autenticado")
 

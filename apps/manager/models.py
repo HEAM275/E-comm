@@ -11,7 +11,7 @@ class UserManager(BaseUserManager):
 
     def create_user(self, email, password=None, **extra_fields):
         if not email:
-            raise ValueError(_('El usuario debe tener un correo electrónico'))
+            raise ValueError(_("El usuario debe tener un correo electrónico"))
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -19,13 +19,13 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
 
-        if extra_fields.get('is_staff') is not True:
-            raise ValueError(_('El superusuario debe tener is_staff=True'))
-        if extra_fields.get('is_superuser') is not True:
-            raise ValueError(_('El superusuario debe tener is_superuser=True'))
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError(_("El superusuario debe tener is_staff=True"))
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError(_("El superusuario debe tener is_superuser=True"))
 
         return self.create_user(email, password, **extra_fields)
 
@@ -33,28 +33,28 @@ class UserManager(BaseUserManager):
 class User(AbstractUser, AuditableMixins):
     # Sobreescribimos username como opcional y lo dejamos solo para compatibilidad
     username = models.CharField(
-        _('username'),
+        _("username"),
         max_length=150,
         blank=True,
         null=True,
-        help_text=_('Optional field')
+        help_text=_("Optional field"),
     )
     email = models.EmailField(
-        _('email address'),
+        _("email address"),
         unique=True,
         error_messages={
-            'unique': _("Ya existe un usuario con este correo electrónico.")
-        }
+            "unique": _("Ya existe un usuario con este correo electrónico.")
+        },
     )
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name']
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["first_name", "last_name"]
 
     objects = UserManager()
 
     class Meta:
-        verbose_name = _('User')
-        verbose_name_plural = _('Users')
+        verbose_name = _("User")
+        verbose_name_plural = _("Users")
 
     def __str__(self):
-        return f'{self.get_full_name()} <{self.email}>'
+        return f"{self.get_full_name()} <{self.email}>"

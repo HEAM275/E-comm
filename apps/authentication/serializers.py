@@ -1,4 +1,3 @@
-
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from apps.manager.models import User
@@ -10,23 +9,20 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
 
     def validate(self, data):
-        email = data.get('email')
-        password = data.get('password')
+        email = data.get("email")
+        password = data.get("password")
 
         if email and password:
             user = authenticate(email=email, password=password)
 
             if user:
                 if not user.is_active:
-                    raise serializers.ValidationError(
-                        _("Usuario desactivado."))
+                    raise serializers.ValidationError(_("Usuario desactivado."))
                 return user
             else:
-                raise serializers.ValidationError(
-                    _("Credenciales incorrectas."))
+                raise serializers.ValidationError(_("Credenciales incorrectas."))
         else:
-            raise serializers.ValidationError(
-                _("Email y contraseña requeridos."))
+            raise serializers.ValidationError(_("Email y contraseña requeridos."))
 
 
 class RefreshTokenSerializer(serializers.Serializer):
@@ -38,7 +34,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'password', 'first_name', 'last_name']
+        fields = ["email", "password", "first_name", "last_name"]
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)

@@ -27,7 +27,7 @@ def get_user_fullname(user):
 # Definición común del header de autorización
 AUTH_HEADER = [
     oa.Parameter(
-        name='Authorization',
+        name="Authorization",
         in_=oa.IN_HEADER,
         description="Bearer <access_token>",
         type=oa.TYPE_STRING,
@@ -44,10 +44,22 @@ class PurchaseView(APIView):
         manual_parameters=AUTH_HEADER,
         request_body=PurchaseRequestSerializer,
         responses={
-            201: oa.Response(description=_('Compra realizada con éxito')),
-            400: oa.Response(description=_('Error de validación'), schema=oa.Schema(type=oa.TYPE_OBJECT, properties={'detail': oa.Schema(type=oa.TYPE_STRING)})),
-            403: oa.Response(description=_('Permiso denegado'), schema=oa.Schema(type=oa.TYPE_OBJECT, properties={'detail': oa.Schema(type=oa.TYPE_STRING)})),
-        }
+            201: oa.Response(description=_("Compra realizada con éxito")),
+            400: oa.Response(
+                description=_("Error de validación"),
+                schema=oa.Schema(
+                    type=oa.TYPE_OBJECT,
+                    properties={"detail": oa.Schema(type=oa.TYPE_STRING)},
+                ),
+            ),
+            403: oa.Response(
+                description=_("Permiso denegado"),
+                schema=oa.Schema(
+                    type=oa.TYPE_OBJECT,
+                    properties={"detail": oa.Schema(type=oa.TYPE_STRING)},
+                ),
+            ),
+        },
     )
     def post(self, request):
         """Crear una nueva orden"""
@@ -70,7 +82,7 @@ class PurchaseView(APIView):
             user=request.user,
             is_paid=True,
             created_by=full_name,
-            created_date=timezone.now()
+            created_date=timezone.now(),
         )
 
         successful_items = []
@@ -84,12 +96,11 @@ class PurchaseView(APIView):
                     order=order,
                     product=item["product"],
                     quantity=item["quantity"],
-                    price=item["price"]
+                    price=item["price"],
                 )
-                successful_items.append({
-                    "product": item["product"].name,
-                    "quantity": item["quantity"]
-                })
+                successful_items.append(
+                    {"product": item["product"].name, "quantity": item["quantity"]}
+                )
                 remaining_payment -= total_cost
 
                 # Actualizar stock
@@ -102,39 +113,62 @@ class PurchaseView(APIView):
         # Guardar updated_by y updated_date (opcional)
         order.updated_by = full_name
         order.updated_date = timezone.now()
-        order.save(update_fields=['updated_by', 'updated_date'])
+        order.save(update_fields=["updated_by", "updated_date"])
 
-        return Response({
-            "message": "Compra realizada con éxito",
-            "successful_items": successful_items,
-            "total": float(total_price),
-            "paid": float(payment_amount),
-            "change": float(remaining_payment),
-        }, status=status.HTTP_201_CREATED)
+        return Response(
+            {
+                "message": "Compra realizada con éxito",
+                "successful_items": successful_items,
+                "total": float(total_price),
+                "paid": float(payment_amount),
+                "change": float(remaining_payment),
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
     @swagger_auto_schema(
         operation_description=_("Obtener detalles de una orden por ID"),
         manual_parameters=AUTH_HEADER,
         responses={
-            200: oa.Response(description=_('Detalles de la orden'), schema=OrderSerializer),
-            400: oa.Response(description=_('ID requerido'), schema=oa.Schema(type=oa.TYPE_OBJECT, properties={'error': oa.Schema(type=oa.TYPE_STRING)})),
-            404: oa.Response(description=_('Orden no encontrada'), schema=oa.Schema(type=oa.TYPE_OBJECT, properties={'error': oa.Schema(type=oa.TYPE_STRING)})),
-        }
+            200: oa.Response(
+                description=_("Detalles de la orden"), schema=OrderSerializer
+            ),
+            400: oa.Response(
+                description=_("ID requerido"),
+                schema=oa.Schema(
+                    type=oa.TYPE_OBJECT,
+                    properties={"error": oa.Schema(type=oa.TYPE_STRING)},
+                ),
+            ),
+            404: oa.Response(
+                description=_("Orden no encontrada"),
+                schema=oa.Schema(
+                    type=oa.TYPE_OBJECT,
+                    properties={"error": oa.Schema(type=oa.TYPE_STRING)},
+                ),
+            ),
+        },
     )
     def get(self, request, pk=None):
         """Obtener detalles de una orden específica"""
         if pk:
             order = get_object_or_404(Order, id=pk, user=request.user)
-            return Response({
-                "id": order.id,
-                "user": order.user.email,
-                "is_paid": order.is_paid,
-                "created_by": order.created_by,
-                "created_date": order.created_date,
-                "updated_by": order.updated_by,
-                "updated_date": order.updated_date
-            }, status=status.HTTP_200_OK)
-        return Response({"error": "No se proporcionó un ID de orden"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {
+                    "id": order.id,
+                    "user": order.user.email,
+                    "is_paid": order.is_paid,
+                    "created_by": order.created_by,
+                    "created_date": order.created_date,
+                    "updated_by": order.updated_by,
+                    "updated_date": order.updated_date,
+                },
+                status=status.HTTP_200_OK,
+            )
+        return Response(
+            {"error": "No se proporcionó un ID de orden"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     @swagger_auto_schema(
         operation_description=_("Actualizar completamente una orden"),
@@ -144,18 +178,20 @@ class PurchaseView(APIView):
             properties={
                 "is_paid": oa.Schema(type=oa.TYPE_BOOLEAN, description="Estado de pago")
             },
-            required=["is_paid"]
+            required=["is_paid"],
         ),
         responses={
-            200: oa.Response(description=_('Orden actualizada exitosamente')),
-            400: oa.Response(description=_('Datos inválidos o ID requerido')),
-            404: oa.Response(description=_('Orden no encontrada')),
-        }
+            200: oa.Response(description=_("Orden actualizada exitosamente")),
+            400: oa.Response(description=_("Datos inválidos o ID requerido")),
+            404: oa.Response(description=_("Orden no encontrada")),
+        },
     )
     def put(self, request, pk=None):
         """Actualizar completamente una orden"""
         if not pk:
-            return Response({"error": "ID requerido"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "ID requerido"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         order = get_object_or_404(Order, id=pk, user=request.user)
 
@@ -170,33 +206,41 @@ class PurchaseView(APIView):
         order.updated_date = timezone.now()
         order.save(update_fields=["is_paid", "updated_by", "updated_date"])
 
-        return Response({
-            "message": "Orden actualizada exitosamente",
-            "is_paid": order.is_paid,
-            "updated_by": order.updated_by,
-            "updated_date": order.updated_date
-        }, status=status.HTTP_200_OK)
+        return Response(
+            {
+                "message": "Orden actualizada exitosamente",
+                "is_paid": order.is_paid,
+                "updated_by": order.updated_by,
+                "updated_date": order.updated_date,
+            },
+            status=status.HTTP_200_OK,
+        )
 
     @swagger_auto_schema(
         operation_description=_(
-            "Actualizar parcialmente una orden (por ejemplo, cambiar estado de pago)"),
+            "Actualizar parcialmente una orden (por ejemplo, cambiar estado de pago)"
+        ),
         manual_parameters=AUTH_HEADER,
         request_body=oa.Schema(
             type=oa.TYPE_OBJECT,
             properties={
-                "is_paid": oa.Schema(type=oa.TYPE_BOOLEAN, description="Nuevo estado de pago")
-            }
+                "is_paid": oa.Schema(
+                    type=oa.TYPE_BOOLEAN, description="Nuevo estado de pago"
+                )
+            },
         ),
         responses={
-            200: oa.Response(description=_('Orden actualizada parcialmente')),
-            400: oa.Response(description=_('Datos inválidos o ID requerido')),
-            404: oa.Response(description=_('Orden no encontrada')),
-        }
+            200: oa.Response(description=_("Orden actualizada parcialmente")),
+            400: oa.Response(description=_("Datos inválidos o ID requerido")),
+            404: oa.Response(description=_("Orden no encontrada")),
+        },
     )
     def patch(self, request, pk=None):
         """Actualización parcial de una orden"""
         if not pk:
-            return Response({"error": "ID requerido"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "ID requerido"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         order = get_object_or_404(Order, id=pk, user=request.user)
 
@@ -212,26 +256,31 @@ class PurchaseView(APIView):
         order.updated_date = timezone.now()
         order.save(update_fields=["is_paid", "updated_by", "updated_date"])
 
-        return Response({
-            "message": "Orden actualizada parcialmente",
-            "is_paid": order.is_paid,
-            "updated_by": order.updated_by,
-            "updated_date": order.updated_date
-        }, status=status.HTTP_200_OK)
+        return Response(
+            {
+                "message": "Orden actualizada parcialmente",
+                "is_paid": order.is_paid,
+                "updated_by": order.updated_by,
+                "updated_date": order.updated_date,
+            },
+            status=status.HTTP_200_OK,
+        )
 
     @swagger_auto_schema(
         operation_description=_("Eliminar una orden (soft-delete)"),
         manual_parameters=AUTH_HEADER,
         responses={
-            204: oa.Response(description=_('Orden eliminada exitosamente')),
-            400: oa.Response(description=_('ID requerido')),
-            404: oa.Response(description=_('Orden no encontrada')),
-        }
+            204: oa.Response(description=_("Orden eliminada exitosamente")),
+            400: oa.Response(description=_("ID requerido")),
+            404: oa.Response(description=_("Orden no encontrada")),
+        },
     )
     def delete(self, request, pk=None):
         """Eliminar una orden (soft-delete)"""
         if not pk:
-            return Response({"error": "ID requerido"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "ID requerido"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         order = get_object_or_404(Order, id=pk, user=request.user)
 
@@ -245,6 +294,7 @@ class PurchaseView(APIView):
         order.is_active = False
         order.save(update_fields=["deleted_by", "deleted_date", "is_active"])
 
-        return Response({
-            "message": "Orden eliminada exitosamente"
-        }, status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"message": "Orden eliminada exitosamente"},
+            status=status.HTTP_204_NO_CONTENT,
+        )

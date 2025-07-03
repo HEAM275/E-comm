@@ -9,7 +9,7 @@ from apps.products.serializer.product import (
     ProductListSerializer,
     ProductRetrieveSerializer,
     ProductCreateSerializer,
-    ProductUpdateSerializer
+    ProductUpdateSerializer,
 )
 from apps.products.models.product import Product
 
@@ -32,18 +32,18 @@ class ProductViewSet(BaseModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
-        if self.action == 'list':
+        if self.action == "list":
             return ProductListSerializer
-        elif self.action == 'retrieve':
+        elif self.action == "retrieve":
             return ProductRetrieveSerializer
-        elif self.action == 'create':
+        elif self.action == "create":
             return ProductCreateSerializer
-        elif self.action in ['update', 'partial_update']:
+        elif self.action in ["update", "partial_update"]:
             return ProductUpdateSerializer
         return super().get_serializer_class()
 
     def get_permissions(self):
-        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+        if self.action in ["create", "update", "partial_update", "destroy"]:
             self.permission_classes = [IsAdminUser]
         return super().get_permissions()
 
@@ -58,7 +58,7 @@ class ProductViewSet(BaseModelViewSet):
         operation_description=_("List all active products"),
         manual_parameters=[
             oa.Parameter(
-                name='Authorization',
+                name="Authorization",
                 in_=oa.IN_HEADER,
                 description="Bearer <access_token>",
                 type=oa.TYPE_STRING,
@@ -66,10 +66,25 @@ class ProductViewSet(BaseModelViewSet):
             ),
         ],
         responses={
-            200: oa.Response(description=_('List of products'), schema=ProductListSerializer(many=True)),
-            403: oa.Response(description=_('Forbidden'), schema=oa.Schema(type=oa.TYPE_OBJECT, properties={'detail': oa.Schema(type=oa.TYPE_STRING)})),
-            404: oa.Response(description=_('Not found'), schema=oa.Schema(type=oa.TYPE_OBJECT, properties={'detail': oa.Schema(type=oa.TYPE_STRING)})),
-        }
+            200: oa.Response(
+                description=_("List of products"),
+                schema=ProductListSerializer(many=True),
+            ),
+            403: oa.Response(
+                description=_("Forbidden"),
+                schema=oa.Schema(
+                    type=oa.TYPE_OBJECT,
+                    properties={"detail": oa.Schema(type=oa.TYPE_STRING)},
+                ),
+            ),
+            404: oa.Response(
+                description=_("Not found"),
+                schema=oa.Schema(
+                    type=oa.TYPE_OBJECT,
+                    properties={"detail": oa.Schema(type=oa.TYPE_STRING)},
+                ),
+            ),
+        },
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
@@ -79,7 +94,7 @@ class ProductViewSet(BaseModelViewSet):
         operation_description=_("Retrieve details of a specific product"),
         manual_parameters=[
             oa.Parameter(
-                name='Authorization',
+                name="Authorization",
                 in_=oa.IN_HEADER,
                 description="Bearer <access_token>",
                 type=oa.TYPE_STRING,
@@ -87,10 +102,24 @@ class ProductViewSet(BaseModelViewSet):
             ),
         ],
         responses={
-            200: oa.Response(description=_('Product details'), schema=ProductRetrieveSerializer),
-            403: oa.Response(description=_('Forbidden'), schema=oa.Schema(type=oa.TYPE_OBJECT, properties={'detail': oa.Schema(type=oa.TYPE_STRING)})),
-            404: oa.Response(description=_('Product not found'), schema=oa.Schema(type=oa.TYPE_OBJECT, properties={'detail': oa.Schema(type=oa.TYPE_STRING)})),
-        }
+            200: oa.Response(
+                description=_("Product details"), schema=ProductRetrieveSerializer
+            ),
+            403: oa.Response(
+                description=_("Forbidden"),
+                schema=oa.Schema(
+                    type=oa.TYPE_OBJECT,
+                    properties={"detail": oa.Schema(type=oa.TYPE_STRING)},
+                ),
+            ),
+            404: oa.Response(
+                description=_("Product not found"),
+                schema=oa.Schema(
+                    type=oa.TYPE_OBJECT,
+                    properties={"detail": oa.Schema(type=oa.TYPE_STRING)},
+                ),
+            ),
+        },
     )
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
@@ -100,7 +129,7 @@ class ProductViewSet(BaseModelViewSet):
         operation_description=_("Create a new product"),
         manual_parameters=[
             oa.Parameter(
-                name='Authorization',
+                name="Authorization",
                 in_=oa.IN_HEADER,
                 description="Bearer <access_token>",
                 type=oa.TYPE_STRING,
@@ -108,27 +137,43 @@ class ProductViewSet(BaseModelViewSet):
             ),
         ],
         responses={
-            201: oa.Response(description=_('Product created successfully'), schema=ProductCreateSerializer),
-            400: oa.Response(description=_('Validation error'), schema=oa.Schema(type=oa.TYPE_OBJECT, properties={'detail': oa.Schema(type=oa.TYPE_STRING)})),
-            403: oa.Response(description=_('Forbidden'), schema=oa.Schema(type=oa.TYPE_OBJECT, properties={'detail': oa.Schema(type=oa.TYPE_STRING)})),
-        }
+            201: oa.Response(
+                description=_("Product created successfully"),
+                schema=ProductCreateSerializer,
+            ),
+            400: oa.Response(
+                description=_("Validation error"),
+                schema=oa.Schema(
+                    type=oa.TYPE_OBJECT,
+                    properties={"detail": oa.Schema(type=oa.TYPE_STRING)},
+                ),
+            ),
+            403: oa.Response(
+                description=_("Forbidden"),
+                schema=oa.Schema(
+                    type=oa.TYPE_OBJECT,
+                    properties={"detail": oa.Schema(type=oa.TYPE_STRING)},
+                ),
+            ),
+        },
     )
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response({
-            'message': _('Product successfully created'),
-            'data': serializer.data
-        }, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            {"message": _("Product successfully created"), "data": serializer.data},
+            status=status.HTTP_201_CREATED,
+            headers=headers,
+        )
 
     # --- UPDATE / PARTIAL_UPDATE ---
     @swagger_auto_schema(
         operation_description=_("Update an existing product"),
         manual_parameters=[
             oa.Parameter(
-                name='Authorization',
+                name="Authorization",
                 in_=oa.IN_HEADER,
                 description="Bearer <access_token>",
                 type=oa.TYPE_STRING,
@@ -136,35 +181,56 @@ class ProductViewSet(BaseModelViewSet):
             ),
         ],
         responses={
-            200: oa.Response(description=_('Product updated successfully'), schema=ProductUpdateSerializer),
-            400: oa.Response(description=_('Validation error'), schema=oa.Schema(type=oa.TYPE_OBJECT, properties={'detail': oa.Schema(type=oa.TYPE_STRING)})),
-            403: oa.Response(description=_('Forbidden'), schema=oa.Schema(type=oa.TYPE_OBJECT, properties={'detail': oa.Schema(type=oa.TYPE_STRING)})),
-            404: oa.Response(description=_('Product not found'), schema=oa.Schema(type=oa.TYPE_OBJECT, properties={'detail': oa.Schema(type=oa.TYPE_STRING)})),
-        }
+            200: oa.Response(
+                description=_("Product updated successfully"),
+                schema=ProductUpdateSerializer,
+            ),
+            400: oa.Response(
+                description=_("Validation error"),
+                schema=oa.Schema(
+                    type=oa.TYPE_OBJECT,
+                    properties={"detail": oa.Schema(type=oa.TYPE_STRING)},
+                ),
+            ),
+            403: oa.Response(
+                description=_("Forbidden"),
+                schema=oa.Schema(
+                    type=oa.TYPE_OBJECT,
+                    properties={"detail": oa.Schema(type=oa.TYPE_STRING)},
+                ),
+            ),
+            404: oa.Response(
+                description=_("Product not found"),
+                schema=oa.Schema(
+                    type=oa.TYPE_OBJECT,
+                    properties={"detail": oa.Schema(type=oa.TYPE_STRING)},
+                ),
+            ),
+        },
     )
     def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
+        partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
-        if getattr(instance, '_prefetched_objects_cache', None):
+        if getattr(instance, "_prefetched_objects_cache", None):
             instance._prefetched_objects_cache = {}
 
         headers = self.get_success_headers(serializer.data)
-        return Response({
-            'message': _('Product successfully updated'),
-            'data': serializer.data
-        }, status=status.HTTP_200_OK, headers=headers)
+        return Response(
+            {"message": _("Product successfully updated"), "data": serializer.data},
+            status=status.HTTP_200_OK,
+            headers=headers,
+        )
 
     # --- DESTROY ---
     @swagger_auto_schema(
         operation_description=_("Soft delete a product"),
         manual_parameters=[
             oa.Parameter(
-                name='Authorization',
+                name="Authorization",
                 in_=oa.IN_HEADER,
                 description="Bearer <access_token>",
                 type=oa.TYPE_STRING,
@@ -172,14 +238,27 @@ class ProductViewSet(BaseModelViewSet):
             ),
         ],
         responses={
-            204: oa.Response(description=_('Product successfully deleted')),
-            403: oa.Response(description=_('Forbidden'), schema=oa.Schema(type=oa.TYPE_OBJECT, properties={'detail': oa.Schema(type=oa.TYPE_STRING)})),
-            404: oa.Response(description=_('Product not found'), schema=oa.Schema(type=oa.TYPE_OBJECT, properties={'detail': oa.Schema(type=oa.TYPE_STRING)})),
-        }
+            204: oa.Response(description=_("Product successfully deleted")),
+            403: oa.Response(
+                description=_("Forbidden"),
+                schema=oa.Schema(
+                    type=oa.TYPE_OBJECT,
+                    properties={"detail": oa.Schema(type=oa.TYPE_STRING)},
+                ),
+            ),
+            404: oa.Response(
+                description=_("Product not found"),
+                schema=oa.Schema(
+                    type=oa.TYPE_OBJECT,
+                    properties={"detail": oa.Schema(type=oa.TYPE_STRING)},
+                ),
+            ),
+        },
     )
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         self.perform_destroy(instance)
-        return Response({
-            'message': _('Product successfully deleted')
-        }, status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"message": _("Product successfully deleted")},
+            status=status.HTTP_204_NO_CONTENT,
+        )
